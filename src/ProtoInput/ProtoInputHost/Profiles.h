@@ -83,6 +83,7 @@ struct Profile
 	bool toggleFakeCursorVisibilityShortcut = false;
 	bool sendMouseMovementMessages = true;
 	bool sendMouseButtonMessages = true;
+	bool sendMouseDblClkMessages = false;
 	bool sendMouseWheelMessages = true;
 	bool sendKeyboardButtonMessages = true;
 	
@@ -119,6 +120,7 @@ struct Profile
 			cereal::make_nvp("toggleFakeCursorVisibilityShortcut", toggleFakeCursorVisibilityShortcut),
 			cereal::make_nvp("sendMouseMovementMessages", sendMouseMovementMessages),
 			cereal::make_nvp("sendMouseButtonMessages", sendMouseButtonMessages),
+			cereal::make_nvp("sendMouseDblClkMessages", sendMouseDblClkMessages),
 			cereal::make_nvp("sendMouseWheelMessages", sendMouseWheelMessages),
 			cereal::make_nvp("sendKeyboardButtonMessages", sendKeyboardButtonMessages),
 
