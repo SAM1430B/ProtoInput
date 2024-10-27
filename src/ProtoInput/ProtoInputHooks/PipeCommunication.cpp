@@ -267,10 +267,11 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetupMessagesToSend*>(messageBuffer);
 
 				printf("Received setup messages to send, send mouse move = %d, send mouse button = %d, send mouse wheel = %d, send keyboard = %d\n", 
-					   body->sendMouseMoveMessages ? 1 : 0, body->sendMouseButtonMessages ? 1 : 0, body->sendMouseWheelMessages ? 1 : 0, body->sendKeyboardPressMessages ? 1 : 0);
+					   body->sendMouseMoveMessages ? 1 : 0, body->sendMouseButtonMessages ? 1 : 0, body->sendMouseDblClkMessages ? 1 : 0, body->sendMouseWheelMessages ? 1 : 0, body->sendKeyboardPressMessages ? 1 : 0);
 
 				RawInput::rawInputState.sendMouseMoveMessages = body->sendMouseMoveMessages;
 				RawInput::rawInputState.sendMouseButtonMessages = body->sendMouseButtonMessages;
+				RawInput::rawInputState.sendMouseDblClkMessages = body->sendMouseDblClkMessages;
 				RawInput::rawInputState.sendMouseWheelMessages = body->sendMouseWheelMessages;
 				RawInput::rawInputState.sendKeyboardPressMessages = body->sendKeyboardPressMessages;
 					
