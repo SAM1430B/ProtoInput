@@ -178,6 +178,7 @@ bool Launch()
         SetupMessagesToSend(instanceHandle,
                             currentProfile.sendMouseWheelMessages,
                             currentProfile.sendMouseButtonMessages,
+                            currentProfile.sendMouseDblClkMessages,
                             currentProfile.sendMouseMovementMessages,
                             currentProfile.sendKeyboardButtonMessages);
 
@@ -889,6 +890,7 @@ void OptionsMenu()
 
         ImGui::Checkbox("Send mouse movement messages", &currentProfile.sendMouseMovementMessages);
         ImGui::Checkbox("Send mouse button messages", &currentProfile.sendMouseButtonMessages);
+        ImGui::Checkbox("Send mouse double click messages", &currentProfile.sendMouseDblClkMessages);
         ImGui::Checkbox("Send mouse wheel messages", &currentProfile.sendMouseWheelMessages);
         ImGui::Checkbox("Send keyboard button messages", &currentProfile.sendKeyboardButtonMessages);
 

@@ -68,7 +68,7 @@ extern "C" __declspec(dllexport) void UpdateMainWindowHandle(ProtoInstanceHandle
 extern "C" __declspec(dllexport) void SetupState(ProtoInstanceHandle instanceHandle, int instanceIndex);
 
 extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle instanceHandle,
-														  bool sendMouseWheelMessages = true, bool sendMouseButtonMessages = true, bool sendMouseMoveMessages = true, bool sendKeyboardPressMessages = true);
+														  bool sendMouseWheelMessages = true, bool sendMouseButtonMessages = true, bool sendMouseDblClkMessages = true, bool sendMouseMoveMessages = true, bool sendKeyboardPressMessages = true);
 
 extern "C" __declspec(dllexport) void StartFocusMessageLoop(ProtoInstanceHandle instanceHandle, int milliseconds = 5,
 															bool wm_activate = true, bool wm_activateapp = true, bool wm_ncactivate = true, bool wm_setfocus = true, bool wm_mouseactivate = true);

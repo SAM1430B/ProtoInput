@@ -19,6 +19,7 @@ struct RawInputState
 		
 	bool sendMouseWheelMessages = false;
 	bool sendMouseButtonMessages = false;
+	bool sendMouseDblClkMessages = false;
 	bool sendMouseMoveMessages = false;
 	bool sendKeyboardPressMessages = false;
 

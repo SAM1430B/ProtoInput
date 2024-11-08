@@ -262,7 +262,7 @@ extern "C" __declspec(dllexport) void AddNamedPipeToRename(ProtoInstanceHandle i
 	AddHandleToRenameImpl(instanceHandle, name, true);
 }
 
-extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle instanceHandle, bool sendMouseWheelMessages, bool sendMouseButtonMessages, bool sendMouseMoveMessages, bool sendKeyboardPressMessages)
+extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle instanceHandle, bool sendMouseWheelMessages, bool sendMouseButtonMessages, bool sendMouseDblClkMessages, bool sendMouseMoveMessages, bool sendKeyboardPressMessages)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
 	{
@@ -274,6 +274,7 @@ extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle in
 		{
 			sendMouseWheelMessages,
 			sendMouseButtonMessages,
+			sendMouseDblClkMessages,
 			sendMouseMoveMessages,
 			sendKeyboardPressMessages
 		};

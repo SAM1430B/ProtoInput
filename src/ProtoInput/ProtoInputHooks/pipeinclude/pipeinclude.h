@@ -86,6 +86,7 @@ struct PipeMessageSetupMessagesToSend
 {
 	bool sendMouseWheelMessages;
 	bool sendMouseButtonMessages;
+	bool sendMouseDblClkMessages;
 	bool sendMouseMoveMessages;
 	bool sendKeyboardPressMessages;
 };
