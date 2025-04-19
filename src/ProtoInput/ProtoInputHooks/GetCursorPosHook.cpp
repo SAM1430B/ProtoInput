@@ -12,6 +12,25 @@ BOOL WINAPI Hook_GetCursorPos(LPPOINT lpPoint)
 		const auto& state = FakeMouseKeyboard::GetMouseState();
 		lpPoint->x = state.x;
 		lpPoint->y = state.y;
+		int clientWidth = HwndSelector::windowWidth;
+		int clientHeight = HwndSelector::windowHeight;
+
+		/*HWND hwnd = (HWND)HwndSelector::GetSelectedHwnd();
+		UINT dpi = GetDpiForWindow(hwnd);
+		float dpiScale = dpi / 96.0f;
+		int windowEdge = static_cast<int>(dpiScale);*/
+
+		const int windowEdge = 1;
+
+		if (lpPoint->y < windowEdge)
+			lpPoint->y = 0;  // Top edge
+		if (lpPoint->x < windowEdge)
+			lpPoint->x = 0;  // Left edge
+		if (lpPoint->y > clientHeight - windowEdge)
+			lpPoint->y = clientHeight - 1;  // Bottom edge
+		if (lpPoint->x > clientWidth - windowEdge)
+			lpPoint->x = clientWidth - 1;  // Right edge
+		
 		ClientToScreen((HWND)HwndSelector::GetSelectedHwnd(), lpPoint);
 	}
 	
