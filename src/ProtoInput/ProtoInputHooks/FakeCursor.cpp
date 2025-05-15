@@ -4,6 +4,7 @@
 #include "FakeMouseKeyboard.h"
 #include "HwndSelector.h"
 #include <string>
+#include "HooksConfig.h"
 
 namespace Proto
 {
@@ -43,7 +44,9 @@ BOOL CALLBACK EnumWindowsProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMoni
 
 void FakeCursor::DrawCursor()
 {
-	//TODO: width/height probably needs to change
+    //int cursorWidth = HooksConfig::gConfig.drawCursorFix ? GetSystemMetrics(SM_CXCURSOR) : 40;
+    //int cursorHeight = HooksConfig::gConfig.drawCursorFix ? GetSystemMetrics(SM_CYCURSOR) : 40;
+
     constexpr int cursorWidth = 40;
     constexpr int cursorHeight = 40;
 
@@ -59,10 +62,36 @@ void FakeCursor::DrawCursor()
     ClientToScreen((HWND)HwndSelector::GetSelectedHwnd(), &pos);
     ScreenToClient(pointerWindow, &pos);
 
-	if (showCursor)
-	    DrawIcon(hdc, pos.x, pos.y, hCursor);
-	    // DrawIconEx(hdc, pos.x, pos.y, hCursor, 0, 0, 0, transparencyBrush, DI_NORMAL | DI_COMPAT | DI_DEFAULTSIZE);
-	
+    //if (HooksConfig::gConfig.adjustDPI)
+    //{
+    //    // Adjust for DPI scaling if necessary
+    //    pos.x = MulDiv(pos.x, GetDeviceCaps(hdc, LOGPIXELSX), 96);
+    //    pos.y = MulDiv(pos.y, GetDeviceCaps(hdc, LOGPIXELSY), 96);
+    //}
+
+
+    if (HooksConfig::gConfig.drawCursorFix)
+    {
+        ICONINFO iconInfo;
+        if (GetIconInfo(hCursor, &iconInfo))
+        {
+            pos.x -= iconInfo.xHotspot;
+            pos.y -= iconInfo.yHotspot;
+        }
+        if (showCursor)
+        {
+            DrawIconEx(hdc, pos.x, pos.y, hCursor, cursorWidth, cursorHeight, 0, transparencyBrush, DI_NORMAL | DI_DEFAULTSIZE);
+        }
+        if (iconInfo.hbmColor) DeleteObject(iconInfo.hbmColor);
+        if (iconInfo.hbmMask) DeleteObject(iconInfo.hbmMask);
+    }
+    else
+    {
+        if (showCursor)
+            DrawIcon(hdc, pos.x, pos.y, hCursor);
+        // DrawIconEx(hdc, pos.x, pos.y, hCursor, 0, 0, 0, transparencyBrush, DI_NORMAL | DI_COMPAT | DI_DEFAULTSIZE);
+    }
+
     oldX = pos.x;
     oldY = pos.y;
 }

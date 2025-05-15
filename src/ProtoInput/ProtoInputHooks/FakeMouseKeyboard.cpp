@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "FakeMouseKeyboard.h"
 #include "HwndSelector.h"
+#include "HooksConfig.h" // temp
 
 namespace Proto
 {
@@ -21,10 +22,10 @@ void FakeMouseKeyboard::AddMouseDelta(int dx, int dy)
 		if (mouseState.y < min)
 			mouseState.y = min;
 
-		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowWidth + 100 : HwndSelector::windowWidth; mouseState.x > max)
+		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowWidth + HooksConfig::gConfig.mouseBoundsWidth : HwndSelector::windowWidth; mouseState.x > max)
 			mouseState.x = max;
 
-		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowHeight + 100 : HwndSelector::windowHeight; mouseState.y > max)
+		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowHeight + HooksConfig::gConfig.mouseBoundsHeight : HwndSelector::windowHeight; mouseState.y > max)
 			mouseState.y = max;
 		
 		if (mouseState.hasClipCursor)
@@ -56,10 +57,10 @@ void FakeMouseKeyboard::SetMousePos(int x, int y)
 		if (mouseState.y < min)
 			mouseState.y = min;
 
-		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowWidth + 100 : HwndSelector::windowWidth; mouseState.x > max)
+		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowWidth + HooksConfig::gConfig.mouseBoundsWidth : HwndSelector::windowWidth; mouseState.x > max)
 			mouseState.x = max;
 
-		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowHeight + 100 : HwndSelector::windowHeight; mouseState.y > max)
+		if (int max = mouseState.extendMouseBounds ? HwndSelector::windowHeight + HooksConfig::gConfig.mouseBoundsHeight : HwndSelector::windowHeight; mouseState.y > max)
 			mouseState.y = max;
 
 		if (mouseState.hasClipCursor)

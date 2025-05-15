@@ -305,5 +305,11 @@
     <ClCompile Include="WindowStyleHook.cpp">
       <Filter>Source Files\Hooks</Filter>
     </ClCompile>
+    <ClCompile Include="HooksConfig.h">
+      <Filter>Source Files\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="HooksConfig.cpp">
+      <Filter>Source Files\Hooks</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

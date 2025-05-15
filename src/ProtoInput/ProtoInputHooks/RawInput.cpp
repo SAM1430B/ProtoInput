@@ -15,6 +15,7 @@
 #include "protoinpututil.h"
 #include "KeyboardButtonFilter.h"
 #include "MessageFilterHook.h"
+#include "HooksConfig.h" //temp
 
 namespace Proto
 {
@@ -125,34 +126,78 @@ void RawInput::ProcessMouseInput(const RAWMOUSE& data, HANDLE deviceHandle)
 		}
 	}
 
+	// Send mouse double click messages (if sendMouseDblClkMessages is TRUE override sendMouseButtonMessages)
+	if (rawInputState.sendMouseButtonMessages) {
+		if (HooksConfig::gConfig.sendMouseDblClkMessages) {
+			static DWORD lastClickTime[5] = { 0 }; // For left, right, middle, X1, and X2 buttons
+			static POINT lastClickPos[5] = { {0, 0} };
+			DWORD currentTime = GetTickCount();
+			POINT currentPos = { FakeMouseKeyboard::GetMouseState().x, FakeMouseKeyboard::GetMouseState().y };
 
-	// Send mouse button messages
-	if (rawInputState.sendMouseButtonMessages)
-	{		
-		if ((data.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_LBUTTONDOWN, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
-		if ((data.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_LBUTTONUP, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
+			struct ButtonEvent {
+				int downFlag, upFlag, downMsg, dblClickMsg, upMsg;
+				DWORD signature;
+			} events[5] = {
+				{RI_MOUSE_LEFT_BUTTON_DOWN, RI_MOUSE_LEFT_BUTTON_UP, WM_LBUTTONDOWN, WM_LBUTTONDBLCLK, WM_LBUTTONUP, 0},
+				{RI_MOUSE_MIDDLE_BUTTON_DOWN, RI_MOUSE_MIDDLE_BUTTON_UP, WM_MBUTTONDOWN, WM_MBUTTONDBLCLK, WM_MBUTTONUP, 0},
+				{RI_MOUSE_RIGHT_BUTTON_DOWN, RI_MOUSE_RIGHT_BUTTON_UP, WM_RBUTTONDOWN, WM_RBUTTONDBLCLK, WM_RBUTTONUP, 0},
+				{RI_MOUSE_BUTTON_4_DOWN, RI_MOUSE_BUTTON_4_UP, WM_XBUTTONDOWN, WM_XBUTTONDBLCLK, WM_XBUTTONUP, XBUTTON1 << 16},
+				{RI_MOUSE_BUTTON_5_DOWN, RI_MOUSE_BUTTON_5_UP, WM_XBUTTONDOWN, WM_XBUTTONDBLCLK, WM_XBUTTONUP, XBUTTON2 << 16}
+			};
 
-		if ((data.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MBUTTONDOWN, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
-		if ((data.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MBUTTONUP, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
+			for (int i = 0; i < 5; ++i) {
+				if (data.usButtonFlags & events[i].downFlag) {
+					if (currentTime - lastClickTime[i] < GetDoubleClickTime() &&
+						abs(currentPos.x - lastClickPos[i].x) < GetSystemMetrics(SM_CXDOUBLECLK) &&
+						abs(currentPos.y - lastClickPos[i].y) < GetSystemMetrics(SM_CYDOUBLECLK))
+					{
+						PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), events[i].dblClickMsg,
+							mouseMkFlags | events[i].signature | MouseButtonFilter::signature, mousePointLparam);
+					}
+					else {
+						PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), events[i].downMsg,
+							mouseMkFlags | events[i].signature | MouseButtonFilter::signature, mousePointLparam);
+					}
+					lastClickTime[i] = currentTime;
+					lastClickPos[i] = currentPos;
+				}
+				if (data.usButtonFlags & events[i].upFlag) {
+					PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), events[i].upMsg,
+						mouseMkFlags | events[i].signature | MouseButtonFilter::signature, mousePointLparam);
+				}
+			}
+		}
+		else
+		{
 
-		if ((data.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_RBUTTONDOWN, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
-		if ((data.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_RBUTTONUP, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
+			// Send mouse button messages
+			//if (rawInputState.sendMouseButtonMessages)
+			//{		
+			if ((data.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) != 0)
+				PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_LBUTTONDOWN, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
+			if ((data.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) != 0)
+				PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_LBUTTONUP, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
 
-		if ((data.usButtonFlags & RI_MOUSE_BUTTON_4_DOWN) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONDOWN, mouseMkFlags | (XBUTTON1 << 4) | MouseButtonFilter::signature, mousePointLparam);
-		if ((data.usButtonFlags & RI_MOUSE_BUTTON_4_UP) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONUP, mouseMkFlags | (XBUTTON1 << 4) | MouseButtonFilter::signature, mousePointLparam);
+			if ((data.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN) != 0)
+				PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MBUTTONDOWN, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
+			if ((data.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) != 0)
+				PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_MBUTTONUP, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
 
-		if ((data.usButtonFlags & RI_MOUSE_BUTTON_5_DOWN) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONDOWN, mouseMkFlags | (XBUTTON2 << 4) | MouseButtonFilter::signature, mousePointLparam);
-		if ((data.usButtonFlags & RI_MOUSE_BUTTON_5_UP) != 0)
-			PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONUP, mouseMkFlags | (XBUTTON2 << 4) | MouseButtonFilter::signature, mousePointLparam);
+			if ((data.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) != 0)
+				PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_RBUTTONDOWN, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
+			if ((data.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP) != 0)
+				PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_RBUTTONUP, mouseMkFlags | MouseButtonFilter::signature, mousePointLparam);
+
+			if ((data.usButtonFlags & RI_MOUSE_BUTTON_4_DOWN) != 0)
+				PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONDOWN, mouseMkFlags | (XBUTTON1 << 4) | MouseButtonFilter::signature, mousePointLparam);
+			if ((data.usButtonFlags & RI_MOUSE_BUTTON_4_UP) != 0)
+				PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONUP, mouseMkFlags | (XBUTTON1 << 4) | MouseButtonFilter::signature, mousePointLparam);
+
+			if ((data.usButtonFlags & RI_MOUSE_BUTTON_5_DOWN) != 0)
+				PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONDOWN, mouseMkFlags | (XBUTTON2 << 4) | MouseButtonFilter::signature, mousePointLparam);
+			if ((data.usButtonFlags & RI_MOUSE_BUTTON_5_UP) != 0)
+				PostMessageW((HWND)HwndSelector::GetSelectedHwnd(), WM_XBUTTONUP, mouseMkFlags | (XBUTTON2 << 4) | MouseButtonFilter::signature, mousePointLparam);
+		}
 	}
 
 
@@ -290,7 +335,9 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 	}
 	
 	// Need to occasionally update the window is case the main window changes (e.g. because of a launcher) or the main window is resized
-	if (rawinput.header.dwType == RIM_TYPEMOUSE && (rawinput.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) != 0)
+	//if (rawinput.header.dwType == RIM_TYPEMOUSE && (rawinput.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) != 0)
+	if (rawinput.header.dwType == RIM_TYPEMOUSE && (rawinput.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP) != 0 || 
+		rawinput.header.dwType == RIM_TYPEKEYBOARD && (rawinput.data.keyboard.VKey == VK_END && rawinput.data.keyboard.Message == WM_KEYUP) != 0)
 	{
 		//TODO: This may waste CPU? (But need a way to update window otherwise)
 		//if (HwndSelector::GetSelectedHwnd() == 0)
@@ -301,7 +348,7 @@ void RawInput::ProcessRawInput(HRAWINPUT rawInputHandle, bool inForeground, cons
 	
 	
 	// Lock input toggle
-	if (lockInputToggleEnabled && rawinput.header.dwType == RIM_TYPEKEYBOARD && rawinput.data.keyboard.VKey == VK_HOME && rawinput.data.keyboard.Message == WM_KEYUP)
+	if (lockInputToggleEnabled && rawinput.header.dwType == RIM_TYPEKEYBOARD && (rawinput.data.keyboard.VKey == VK_HOME && rawinput.data.keyboard.Message == WM_KEYUP) != 0)
 	{
 		static bool locked = false;
 		locked = !locked;

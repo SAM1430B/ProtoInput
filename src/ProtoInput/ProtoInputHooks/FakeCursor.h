@@ -14,6 +14,7 @@ class FakeCursor
 	HDC hdc;
 	HBRUSH transparencyBrush;
 	HCURSOR hCursor;
+	UINT istepIfAniCur;
 	static constexpr auto transparencyKey = RGB(0, 0, 1);
 	
 	int oldX, oldY;
