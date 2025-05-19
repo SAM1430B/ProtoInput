@@ -10,6 +10,8 @@ namespace Proto
 
 FakeCursor FakeCursor::state{};
 
+bool FakeCursor::DrawFakeCursorFix = false;
+
 LRESULT WINAPI FakeCursorWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
@@ -43,7 +45,7 @@ BOOL CALLBACK EnumWindowsProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMoni
 
 void FakeCursor::DrawCursor()
 {
-	//TODO: width/height probably needs to change
+        //TODO: width/height probably needs to change
     constexpr int cursorWidth = 40;
     constexpr int cursorHeight = 40;
 
@@ -59,27 +61,15 @@ void FakeCursor::DrawCursor()
     ClientToScreen((HWND)HwndSelector::GetSelectedHwnd(), &pos);
     ScreenToClient(pointerWindow, &pos);
 
-    if (drawCursorFix)
+    if (DrawFakeCursorFix)
     {
-        ICONINFO iconInfo;
-        if (GetIconInfo(hCursor, &iconInfo))
-        {
-            pos.x -= iconInfo.xHotspot;
-            pos.y -= iconInfo.yHotspot;
-        }
-        if (showCursor)
-        {
-            DrawIconEx(hdc, pos.x, pos.y, hCursor, cursorWidth, cursorHeight, 0, transparencyBrush, DI_NORMAL | DI_DEFAULTSIZE);
-        }
-        if (iconInfo.hbmColor) DeleteObject(iconInfo.hbmColor);
-        if (iconInfo.hbmMask) DeleteObject(iconInfo.hbmMask);
+		pos.x -= 12;
+		pos.y -= 12;
     }
-    else
-    {
-        if (showCursor)
+
+    if (showCursor)
             DrawIcon(hdc, pos.x, pos.y, hCursor);
-        // DrawIconEx(hdc, pos.x, pos.y, hCursor, 0, 0, 0, transparencyBrush, DI_NORMAL | DI_COMPAT | DI_DEFAULTSIZE);
-    }
+            //DrawIconEx(hdc, pos.x, pos.y, hCursor, 0, 0, 0, transparencyBrush, DI_NORMAL | DI_COMPAT | DI_DEFAULTSIZE);
 	
     oldX = pos.x;
     oldY = pos.y;

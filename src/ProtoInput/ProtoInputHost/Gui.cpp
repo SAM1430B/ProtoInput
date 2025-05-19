@@ -51,6 +51,18 @@ StartupInjectionType selectedStartupInjectionType = StartupInjectionType::EASYHO
 
 std::vector<ProtoInstanceHandle> trackedInstanceHandles{};
 
+void ShowTooltip(const char* text)
+{
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(text);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
+
 static bool isInputCurrentlyLocked = false;
 void OnInputLockChange(bool locked)
 {
@@ -178,9 +190,9 @@ bool Launch()
         SetupMessagesToSend(instanceHandle,
                             currentProfile.sendMouseWheelMessages,
                             currentProfile.sendMouseButtonMessages,
-                            currentProfile.sendMouseDblClkMessages,
                             currentProfile.sendMouseMovementMessages,
-                            currentProfile.sendKeyboardButtonMessages);
+                            currentProfile.sendKeyboardButtonMessages,
+                            currentProfile.sendMouseDblClkMessages);
 
         if (currentProfile.focusMessageLoop)
             StartFocusMessageLoop(instanceHandle,
@@ -192,10 +204,14 @@ bool Launch()
                                   currentProfile.focusLoopSendWM_MOUSEACTIVATE);
 
         SetDrawFakeCursor(instanceHandle, currentProfile.drawFakeMouseCursor);
+
+        SetDrawFakeCursorFix(instanceHandle, currentProfile.drawFakeCursorFix);
     	
         AllowFakeCursorOutOfBounds(instanceHandle, currentProfile.allowMouseOutOfBounds, currentProfile.extendMouseBounds);
 
         SetToggleFakeCursorVisibilityShortcut(instanceHandle, currentProfile.toggleFakeCursorVisibilityShortcut, VK_HOME);
+
+        SetPutMouseInsideWindow(instanceHandle, currentProfile.putMouseInsideWindow);
     	
         for (const auto& renameHandle : currentProfile.renameHandles)
             AddHandleToRename(instanceHandle, utf8_decode(renameHandle).c_str());
@@ -869,6 +885,8 @@ void OptionsMenu()
 	
     ImGui::Checkbox("Show fake cursor when image updated", &currentProfile.showCursorWhenImageUpdated);
 
+    ImGui::Checkbox("Put mouse inside the window", &currentProfile.putMouseInsideWindow);
+
     if (ImGui::CollapsingHeader("Message Filters", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
     {
         for (auto& filter : currentProfile.messageFilters)
@@ -880,6 +898,10 @@ void OptionsMenu()
     if (ImGui::CollapsingHeader("Options", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Leaf))
     {
         ImGui::Checkbox("Draw fake mouse cursor", &currentProfile.drawFakeMouseCursor);
+        ImGui::Checkbox("Enable draw cursor fix", &currentProfile.drawFakeCursorFix);
+        ShowTooltip("'Draw fake mouse cursor' must be enabled. ");
+
+        ImGui::Separator();
     	
         ImGui::Checkbox("Allow fake cursor to go out of bounds", &currentProfile.allowMouseOutOfBounds);
         ImGui::Checkbox("Extend fake cursor boundaries", &currentProfile.extendMouseBounds);
@@ -890,9 +912,10 @@ void OptionsMenu()
 
         ImGui::Checkbox("Send mouse movement messages", &currentProfile.sendMouseMovementMessages);
         ImGui::Checkbox("Send mouse button messages", &currentProfile.sendMouseButtonMessages);
-        ImGui::Checkbox("Send mouse double click messages", &currentProfile.sendMouseDblClkMessages);
         ImGui::Checkbox("Send mouse wheel messages", &currentProfile.sendMouseWheelMessages);
         ImGui::Checkbox("Send keyboard button messages", &currentProfile.sendKeyboardButtonMessages);
+        ImGui::Checkbox("Send mouse double click messages", &currentProfile.sendMouseDblClkMessages);
+
 
     }
 

@@ -266,14 +266,14 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 			{
 				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetupMessagesToSend*>(messageBuffer);
 
-				printf("Received setup messages to send, send mouse move = %d, send mouse button = %d, send mouse wheel = %d, send keyboard = %d\n", 
-					   body->sendMouseMoveMessages ? 1 : 0, body->sendMouseButtonMessages ? 1 : 0, body->sendMouseDblClkMessages ? 1 : 0, body->sendMouseWheelMessages ? 1 : 0, body->sendKeyboardPressMessages ? 1 : 0);
+				printf("Received setup messages to send, send mouse move = %d, send mouse button = %d, send mouse wheel = %d, send keyboard = %d, send mouse DblClk = %d\n", 
+					   body->sendMouseMoveMessages ? 1 : 0, body->sendMouseButtonMessages ? 1 : 0, body->sendMouseWheelMessages ? 1 : 0, body->sendKeyboardPressMessages ? 1 : 0, body->sendMouseDblClkMessages ? 1 : 0);
 
 				RawInput::rawInputState.sendMouseMoveMessages = body->sendMouseMoveMessages;
 				RawInput::rawInputState.sendMouseButtonMessages = body->sendMouseButtonMessages;
-				RawInput::rawInputState.sendMouseDblClkMessages = body->sendMouseDblClkMessages;
 				RawInput::rawInputState.sendMouseWheelMessages = body->sendMouseWheelMessages;
 				RawInput::rawInputState.sendKeyboardPressMessages = body->sendKeyboardPressMessages;
+				RawInput::rawInputState.sendMouseDblClkMessages = body->sendMouseDblClkMessages;
 					
 				break;
 			}
@@ -284,6 +284,17 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				printf("Received message to %s fake cursor\n", body->enable ? "enable" : "disable");
 
 				FakeCursor::EnableDisableFakeCursor(body->enable);
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetDrawFakeCursorFix:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetDrawFakeCursorFix*>(messageBuffer);
+
+				printf("Received message to %s fake cursor fix\n", body->enable ? "enable" : "disable");
+
+				// Not sure about this...
+				FakeCursor::state.DrawFakeCursorFix = body->enable;
 
 				break;
 			}
@@ -453,6 +464,16 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				printf("Received ShowCursorWhenImageUpdated, enabled = %d\n", body->ShowCursorWhenImageUpdated);
 
 				CursorVisibilityHook::ShowCursorWhenImageUpdated = body->ShowCursorWhenImageUpdated;
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetPutMouseInsideWindow:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessagePutMouseInsideWindow*>(messageBuffer);
+
+				printf("Received PutMouseInsideWindow, enabled = %d\n", body->PutMouseInsideWindow);
+
+				FakeMouseKeyboard::PutMouseInsideWindow = body->PutMouseInsideWindow;
 
 				break;
 			}

@@ -104,6 +104,23 @@ void SetDrawFakeCursor(ProtoInstanceHandle instanceHandle, bool enable)
 	}
 }
 
+void SetDrawFakeCursorFix(ProtoInstanceHandle instanceHandle, bool enable)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetDrawFakeCursorFix message
+		{
+			enable
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetDrawFakeCursorFix, &message);
+	}
+}
+
 extern "C" __declspec(dllexport) void SetExternalFreezeFakeInput(ProtoInstanceHandle instanceHandle, bool enableFreeze)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
@@ -262,7 +279,7 @@ extern "C" __declspec(dllexport) void AddNamedPipeToRename(ProtoInstanceHandle i
 	AddHandleToRenameImpl(instanceHandle, name, true);
 }
 
-extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle instanceHandle, bool sendMouseWheelMessages, bool sendMouseButtonMessages, bool sendMouseDblClkMessages, bool sendMouseMoveMessages, bool sendKeyboardPressMessages)
+extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle instanceHandle, bool sendMouseWheelMessages, bool sendMouseButtonMessages, bool sendMouseMoveMessages, bool sendKeyboardPressMessages, bool sendMouseDblClkMessages)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
 	{
@@ -274,9 +291,9 @@ extern "C" __declspec(dllexport) void SetupMessagesToSend(ProtoInstanceHandle in
 		{
 			sendMouseWheelMessages,
 			sendMouseButtonMessages,
-			sendMouseDblClkMessages,
 			sendMouseMoveMessages,
-			sendKeyboardPressMessages
+			sendKeyboardPressMessages,
+			sendMouseDblClkMessages
 		};
 
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetupMessagesToSend, &message);
@@ -490,5 +507,22 @@ void SetShowCursorWhenImageUpdated(ProtoInstanceHandle instanceHandle, bool enab
 		};
 
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetShowCursorWhenImageUpdated, &message);
+	}
+}
+
+void SetPutMouseInsideWindow(ProtoInstanceHandle instanceHandle, bool enabled)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessagePutMouseInsideWindow message
+		{
+			enabled
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetPutMouseInsideWindow, &message);
 	}
 }

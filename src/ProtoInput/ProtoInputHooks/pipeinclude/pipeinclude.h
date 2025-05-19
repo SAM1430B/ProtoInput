@@ -16,6 +16,7 @@ enum class PipeMessageType
 	SetupState,
 	SetupMessagesToSend,
 	SetDrawFakeCursor,
+	SetDrawFakeCursorFix,
 	SetExternalFreezeFakeInput,
 	AddSelectedMouseOrKeyboard,
 	AddHandleToRename,
@@ -31,7 +32,8 @@ enum class PipeMessageType
 	SetAllowFakeCursorOutOfBounds,
 	SetToggleCursorVisibilityShortcut,
 	SetRawInputBypass,
-	SetShowCursorWhenImageUpdated
+	SetShowCursorWhenImageUpdated,
+	SetPutMouseInsideWindow
 };
 
 struct PipeMessageHeader
@@ -86,12 +88,17 @@ struct PipeMessageSetupMessagesToSend
 {
 	bool sendMouseWheelMessages;
 	bool sendMouseButtonMessages;
-	bool sendMouseDblClkMessages;
 	bool sendMouseMoveMessages;
 	bool sendKeyboardPressMessages;
+	bool sendMouseDblClkMessages;
 };
 
 struct PipeMessageSetDrawFakeCursor
+{
+	bool enable;
+};
+
+struct PipeMessageSetDrawFakeCursorFix
 {
 	bool enable;
 };
@@ -184,6 +191,11 @@ struct PipeMessageSetRawInputBypass
 struct PipeMessageShowCursorWhenImageUpdated
 {
 	bool ShowCursorWhenImageUpdated;
+};
+
+struct PipeMessagePutMouseInsideWindow
+{
+	bool PutMouseInsideWindow;
 };
 
 }
