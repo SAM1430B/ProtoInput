@@ -10,8 +10,6 @@ namespace Proto
 
 FakeCursor FakeCursor::state{};
 
-bool FakeCursor::DrawFakeCursorFix = false;
-
 LRESULT WINAPI FakeCursorWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
@@ -60,12 +58,6 @@ void FakeCursor::DrawCursor()
     POINT pos = { FakeMouseKeyboard::GetMouseState().x,FakeMouseKeyboard::GetMouseState().y };
     ClientToScreen((HWND)HwndSelector::GetSelectedHwnd(), &pos);
     ScreenToClient(pointerWindow, &pos);
-
-    if (DrawFakeCursorFix)
-    {
-		pos.x -= 12;
-		pos.y -= 12;
-    }
 
     if (showCursor)
             DrawIcon(hdc, pos.x, pos.y, hCursor);

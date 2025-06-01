@@ -23,6 +23,8 @@
 #include "ClipCursorHook.h"
 #include "FakeMouseKeyboard.h"
 #include "CursorVisibilityHook.h"
+#include "MoveWindowHook.h"
+#include "AdjustWindowRectHook.h"
 
 namespace Proto
 {
@@ -287,17 +289,6 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 
 				break;
 			}
-			case ProtoPipe::PipeMessageType::SetDrawFakeCursorFix:
-			{
-				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetDrawFakeCursorFix*>(messageBuffer);
-
-				printf("Received message to %s fake cursor fix\n", body->enable ? "enable" : "disable");
-
-				// Not sure about this...
-				FakeCursor::state.DrawFakeCursorFix = body->enable;
-
-				break;
-			}
 			case ProtoPipe::PipeMessageType::SetExternalFreezeFakeInput:
 			{
 				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetExternalFreezeFakeInput*>(messageBuffer);
@@ -405,6 +396,26 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 
 				break;
 			}
+			case ProtoPipe::PipeMessageType::SetSetWindowPosDontResize:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetSetWindowPosDontResize*>(messageBuffer);
+
+				printf("Received SetSetWindowPosDontResize, enabled = %d\n", body->SetWindowPosDontResize);
+
+				SetWindowPosHook::SetWindowPosDontResize = body->SetWindowPosDontResize;
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetSetWindowPosDontReposition:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetSetWindowPosDontReposition*>(messageBuffer);
+
+				printf("Received SetSetWindowPosDontReposition, enabled = %d\n", body->SetWindowPosDontReposition);
+
+				SetWindowPosHook::SetWindowPosDontReposition = body->SetWindowPosDontReposition;
+
+				break;
+			}
 			case ProtoPipe::PipeMessageType::SetCreateSingleHIDName:
 			{
 				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetCreateSingleHIDName*>(messageBuffer);
@@ -474,6 +485,52 @@ DWORD WINAPI PipeThread(LPVOID lpParameter)
 				printf("Received PutMouseInsideWindow, enabled = %d\n", body->PutMouseInsideWindow);
 
 				FakeMouseKeyboard::PutMouseInsideWindow = body->PutMouseInsideWindow;
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetMoveWindowSettings:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetMoveWindowSettings*>(messageBuffer);
+
+				printf("Received SetMoveWindowSettings. Pos (%d, %d), Size (%d,%d)\n", body->posx, body->posy, body->width, body->height);
+
+				MoveWindowHook::posx = body->posx;
+				MoveWindowHook::posy = body->posy;
+				MoveWindowHook::width = body->width;
+				MoveWindowHook::height = body->height;
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetMoveWindowDontResize:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetMoveWindowDontResize*>(messageBuffer);
+
+				printf("Received SetMoveWindowDontResize, enabled = %d\n", body->MoveWindowDontResize);
+
+				MoveWindowHook::MoveWindowDontResize = body->MoveWindowDontResize;
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetMoveWindowDontReposition:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetMoveWindowDontReposition*>(messageBuffer);
+
+				printf("Received SetMoveWindowDontReposition, enabled = %d\n", body->MoveWindowDontReposition);
+
+				MoveWindowHook::MoveWindowDontReposition = body->MoveWindowDontReposition;
+
+				break;
+			}
+			case ProtoPipe::PipeMessageType::SetAdjustWindowRectSettings:
+			{
+				const auto body = reinterpret_cast<ProtoPipe::PipeMessageSetAdjustWindowRectSettings*>(messageBuffer);
+
+				printf("Received SetAdjustWindowRectSettings. Pos (%d, %d), Size (%d,%d)\n", body->posx, body->posy, body->width, body->height);
+
+				AdjustWindowRectHook::posx = body->posx;
+				AdjustWindowRectHook::posy = body->posy;
+				AdjustWindowRectHook::width = body->width;
+				AdjustWindowRectHook::height = body->height;
 
 				break;
 			}

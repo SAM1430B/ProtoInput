@@ -80,7 +80,6 @@ struct Profile
 	bool putMouseInsideWindow = false;
 	
 	bool drawFakeMouseCursor = true;
-	bool drawFakeCursorFix = false;
 	bool allowMouseOutOfBounds = false;
 	bool extendMouseBounds = false;
 	bool toggleFakeCursorVisibilityShortcut = false;
@@ -118,7 +117,6 @@ struct Profile
 			cereal::make_nvp("showCursorWhenImageUpdated", showCursorWhenImageUpdated),
 
 			cereal::make_nvp("drawFakeMouseCursor", drawFakeMouseCursor),
-			cereal::make_nvp("drawFakeCursorFix", drawFakeCursorFix),
 			cereal::make_nvp("allowMouseOutOfBounds", allowMouseOutOfBounds),
 			cereal::make_nvp("extendMouseBounds", extendMouseBounds),
 			cereal::make_nvp("toggleFakeCursorVisibilityShortcut", toggleFakeCursorVisibilityShortcut),

@@ -24,7 +24,10 @@ enum ProtoHookIDs : unsigned int
 	BlockRawInputHookID,
 	FindWindowHookID,
 	CreateSingleHIDHookID,
-	WindowStyleHookID
+	WindowStyleHookID,
+	MoveWindowHookID,
+	AdjustWindowRectHookID,
+	RemoveBorderHookID
 };
 
 enum ProtoMessageFilterIDs : unsigned int
@@ -77,8 +80,6 @@ extern "C" __declspec(dllexport) void StopFocusMessageLoop(ProtoInstanceHandle i
 
 extern "C" __declspec(dllexport) void SetDrawFakeCursor(ProtoInstanceHandle instanceHandle, bool enable);
 
-extern "C" __declspec(dllexport) void SetDrawFakeCursorFix(ProtoInstanceHandle instanceHandle, bool enable);
-
 extern "C" __declspec(dllexport) void SetExternalFreezeFakeInput(ProtoInstanceHandle instanceHandle, bool enableFreeze);
 
 extern "C" __declspec(dllexport) void AddSelectedMouseHandle(ProtoInstanceHandle instanceHandle, unsigned int mouseHandle);
@@ -114,6 +115,10 @@ extern "C" __declspec(dllexport) void DinputHookAlsoHooksGetDeviceState(ProtoIns
 
 extern "C" __declspec(dllexport) void SetSetWindowPosSettings(ProtoInstanceHandle instanceHandle, int posx, int posy, int width, int height);
 
+extern "C" __declspec(dllexport) void SetSetWindowPosDontResize(ProtoInstanceHandle instanceHandle, bool enabled);
+
+extern "C" __declspec(dllexport) void SetSetWindowPosDontReposition(ProtoInstanceHandle instanceHandle, bool enabled);
+
 extern "C" __declspec(dllexport) void SetCreateSingleHIDName(ProtoInstanceHandle instanceHandle, const wchar_t* name);
 
 extern "C" __declspec(dllexport) void SetCursorClipOptions(ProtoInstanceHandle instanceHandle, bool useFakeClipCursor);
@@ -127,3 +132,11 @@ extern "C" __declspec(dllexport) void SetRawInputBypass(ProtoInstanceHandle inst
 extern "C" __declspec(dllexport) void SetShowCursorWhenImageUpdated(ProtoInstanceHandle instanceHandle, bool enabled);
 
 extern "C" __declspec(dllexport) void SetPutMouseInsideWindow(ProtoInstanceHandle instanceHandle, bool enabled);
+
+extern "C" __declspec(dllexport) void SetMoveWindowSettings(ProtoInstanceHandle instanceHandle, int posx, int posy, int width, int height);
+
+extern "C" __declspec(dllexport) void SetMoveWindowDontResize(ProtoInstanceHandle instanceHandle, bool enabled);
+
+extern "C" __declspec(dllexport) void SetMoveWindowDontReposition(ProtoInstanceHandle instanceHandle, bool enabled);
+
+extern "C" __declspec(dllexport) void SetAdjustWindowRectSettings(ProtoInstanceHandle instanceHandle, int posx, int posy, int width, int height);

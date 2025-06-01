@@ -76,9 +76,6 @@ public:
 	{
 		state.hCursor = newCursor;
 	}
-
-	// Fix for CnC Generals and Space Engineers, to draw the fake cursor correctly thanks to `messenils`.
-	static bool DrawFakeCursorFix;
 	
 	static void EnableDisableFakeCursor(bool enable);
 

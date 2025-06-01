@@ -18,6 +18,10 @@
 #include "FindWindowHook.h"
 #include "CreateSingleHIDHook.h"
 #include "WindowStyleHook.h"
+#include "MoveWindowHook.h"
+#include "AdjustWindowRectHook.h"
+#include "RemoveBorderHook.h"
+
 
 namespace Proto
 {
@@ -46,6 +50,9 @@ HookManager::HookManager()
 	AddHook<FindWindowHook>(ProtoHookIDs::FindWindowHookID);
 	AddHook<CreateSingleHIDHook>(ProtoHookIDs::CreateSingleHIDHookID);
 	AddHook<WindowStyleHook>(ProtoHookIDs::WindowStyleHookID);
+	AddHook<MoveWindowHook>(ProtoHookIDs::MoveWindowHookID);
+	AddHook<AdjustWindowRectHook>(ProtoHookIDs::AdjustWindowRectHookID);
+	AddHook<RemoveBorderHook>(ProtoHookIDs::RemoveBorderHookID);
 }
 
 void HookManager::InstallHook(ProtoHookIDs hookID)

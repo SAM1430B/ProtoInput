@@ -104,23 +104,6 @@ void SetDrawFakeCursor(ProtoInstanceHandle instanceHandle, bool enable)
 	}
 }
 
-void SetDrawFakeCursorFix(ProtoInstanceHandle instanceHandle, bool enable)
-{
-	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
-	{
-		auto& instance = find->second;
-
-		WaitClientConnect(instance);
-
-		ProtoPipe::PipeMessageSetDrawFakeCursorFix message
-		{
-			enable
-		};
-
-		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetDrawFakeCursorFix, &message);
-	}
-}
-
 extern "C" __declspec(dllexport) void SetExternalFreezeFakeInput(ProtoInstanceHandle instanceHandle, bool enableFreeze)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
@@ -395,6 +378,40 @@ void SetSetWindowPosSettings(ProtoInstanceHandle instanceHandle, int posx, int p
 	}
 }
 
+void SetSetWindowPosDontResize(ProtoInstanceHandle instanceHandle, bool enabled)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetSetWindowPosDontResize message
+		{
+			enabled
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetSetWindowPosDontResize, &message);
+	}
+}
+
+void SetSetWindowPosDontReposition(ProtoInstanceHandle instanceHandle, bool enabled)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetSetWindowPosDontReposition message
+		{
+			enabled
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetSetWindowPosDontReposition, &message);
+	}
+}
+
 void SetCreateSingleHIDName(ProtoInstanceHandle instanceHandle, const wchar_t* name)
 {
 	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
@@ -524,5 +541,73 @@ void SetPutMouseInsideWindow(ProtoInstanceHandle instanceHandle, bool enabled)
 		};
 
 		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetPutMouseInsideWindow, &message);
+	}
+}
+
+void SetMoveWindowSettings(ProtoInstanceHandle instanceHandle, int posx, int posy, int width, int height)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetMoveWindowSettings message
+		{
+			posx, posy, width, height
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetMoveWindowSettings, &message);
+	}
+}
+
+void SetMoveWindowDontResize(ProtoInstanceHandle instanceHandle, bool enabled)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetMoveWindowDontResize message
+		{
+			enabled
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetMoveWindowDontResize, &message);
+	}
+}
+
+void SetMoveWindowDontReposition(ProtoInstanceHandle instanceHandle, bool enabled)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetMoveWindowDontReposition message
+		{
+			enabled
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetMoveWindowDontReposition, &message);
+	}
+}
+
+void SetAdjustWindowRectSettings(ProtoInstanceHandle instanceHandle, int posx, int posy, int width, int height)
+{
+	if (const auto find = Proto::instances.find(instanceHandle); find != Proto::instances.end())
+	{
+		auto& instance = find->second;
+
+		WaitClientConnect(instance);
+
+		ProtoPipe::PipeMessageSetAdjustWindowRectSettings message
+		{
+			posx, posy, width, height
+		};
+
+		ProtoSendPipeMessage(instance.pipeHandle, ProtoPipe::PipeMessageType::SetAdjustWindowRectSettings, &message);
 	}
 }
