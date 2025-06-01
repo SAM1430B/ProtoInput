@@ -171,6 +171,8 @@
     <ClInclude Include="WindowStyleHook.h">
       <Filter>Source Files\Hooks</Filter>
     </ClInclude>
+    <ClInclude Include="MoveWindowHook.h">
+      <Filter>Source Files\Hooks</Filter>
     </ClInclude>
     <ClInclude Include="AdjustWindowRectHook.h">
       <Filter>Source Files\Hooks</Filter>
